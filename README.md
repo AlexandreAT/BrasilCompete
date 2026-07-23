@@ -1,50 +1,56 @@
-# Welcome to your Expo app 👋
+# Brasil Compete
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Aplicativo mobile para centralizar eventos esportivos internacionais com
+representação brasileira.
 
-## Get started
+O projeto usa React Native, TypeScript, Expo SDK 54, Expo Router, TanStack Query
+e NativeWind. As decisões arquiteturais e a visão do produto estão detalhadas
+em [PROJECT_GUIDE.md](./PROJECT_GUIDE.md).
 
-1. Install dependencies
+## Requisitos
 
-   ```bash
-   npm install
-   ```
+- Node.js 20.19 ou superior;
+- npm;
+- Expo Go instalado no celular.
 
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+## Instalação
 
 ```bash
-npm run reset-project
+npm install
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## Execução com Expo Go
 
-## Learn more
+```bash
+npm start
+```
 
-To learn more about developing your project with Expo, look at the following resources:
+Com o computador e o celular na mesma rede, abra o Expo Go e leia o QR Code
+mostrado no terminal. Se a rede local bloquear a conexão, tente:
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+```bash
+npm start -- --tunnel
+```
 
-## Join the community
+Outros comandos disponíveis:
 
-Join our community of developers creating universal apps.
+```bash
+npm run android
+npm run ios
+npm run web
+npm run lint
+npm run typecheck
+```
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## Organização
+
+- `src/index.ts`: inicia o Expo Router;
+- `src/App.tsx`: componente principal do aplicativo;
+- `src/AppRoutes.tsx`: navegação principal;
+- `src/pages/`: páginas do aplicativo;
+- `app/`: arquivos de ligação exigidos pelo Expo Router;
+- `assets/`: imagens e demais arquivos estáticos.
+
+Os arquivos `babel.config.js`, `metro.config.js`, `tailwind.config.js`,
+`global.css` e `nativewind-env.d.ts` são a configuração mínima necessária para
+usar NativeWind, conforme definido no guia do projeto.
