@@ -7,8 +7,8 @@ using BrasilCompete.Worker.Integrations.Wikipedia.Wikitext;
 namespace BrasilCompete.Worker.Integrations.Wikipedia.Tennis;
 
 /// <summary>
-/// Lê as chaves de tênis (predefinições <c>...Bracket-Tennis...</c>) pelos parâmetros <c>RD{rodada}-team{posição}</c>:
-/// em cada rodada, as posições ímpar e par seguinte formam um confronto.
+/// Lê as chaves de tênis e de tênis de mesa (predefinições <c>...Bracket...</c>) pelos parâmetros
+/// <c>RD{rodada}-team{posição}</c>: em cada rodada, as posições ímpar e par seguinte formam um confronto.
 /// </summary>
 public static partial class TennisDrawReader
 {
@@ -23,7 +23,7 @@ public static partial class TennisDrawReader
 
         foreach (var bracket in ParsoidReader.ReadTemplates(html, name => name.Contains("Bracket", StringComparison.OrdinalIgnoreCase)))
         {
-            var slots = bracket.Parameters
+            var slots = NamedParameters(bracket)
                 .Select(parameter => (Match: TeamParameterPattern().Match(parameter.Key), parameter.Value))
                 .Where(item => item.Match.Success)
                 .Select(item => (
@@ -31,6 +31,7 @@ public static partial class TennisDrawReader
                     Slot: int.Parse(item.Match.Groups["slot"].Value, CultureInfo.InvariantCulture),
                     Player: ParsePlayer(item.Value)))
                 .ToList();
+            var roundCount = slots.Count == 0 ? 0 : slots.Max(slot => slot.Round);
 
             foreach (var round in slots.GroupBy(slot => slot.Round))
             {
@@ -38,12 +39,47 @@ public static partial class TennisDrawReader
 
                 for (var index = 0; index + 1 < ordered.Count; index += 2)
                 {
-                    matches.Add(new TennisDrawMatch(bracket.Heading, round.Key, ordered[index].Slot, ordered[index].Player, ordered[index + 1].Player));
+                    matches.Add(new TennisDrawMatch(bracket.TopHeading, bracket.Heading, round.Key, roundCount, ordered[index].Slot, ordered[index].Player, ordered[index + 1].Player));
                 }
             }
         }
 
-        return matches;
+        return RemoveRepeatedMatches(matches);
+    }
+
+    /// <summary>
+    /// Em algumas chaves a última rodada das seções se repete no começo da seção "Finals" (ex.: as quartas de final).
+    /// Como numa chave eliminatória o mesmo par só se enfrenta uma vez por prova, fica o confronto da seção "Finals".
+    /// </summary>
+    public static IReadOnlyList<TennisDrawMatch> RemoveRepeatedMatches(IReadOnlyList<TennisDrawMatch> matches)
+    {
+        var finals = matches.Where(IsFinals).Select(PairKey).OfType<string>().ToHashSet(StringComparer.Ordinal);
+
+        return matches.Where(match => IsFinals(match) || PairKey(match) is not { } key || !finals.Contains(key)).ToList();
+    }
+
+    private static bool IsFinals(TennisDrawMatch match) =>
+        string.Equals(match.Section, "Finals", StringComparison.OrdinalIgnoreCase);
+
+    private static string? PairKey(TennisDrawMatch match) =>
+        match is { First: { } first, Second: { } second }
+            ? $"{match.Event}|{string.Join('|', new[] { first.Name, second.Name }.Order(StringComparer.Ordinal))}"
+            : null;
+
+    /// <summary>
+    /// No módulo <c>{{#invoke:Bracket|...}}</c>, o Parsoid entrega cada parâmetro como posicional, com o texto
+    /// "RD1-team1 = ..."; aqui eles voltam a ser nomeados.
+    /// </summary>
+    private static IEnumerable<KeyValuePair<string, string>> NamedParameters(ParsoidTemplate bracket)
+    {
+        foreach (var (key, value) in bracket.Parameters)
+        {
+            var separator = value.IndexOf('=', StringComparison.Ordinal);
+
+            yield return int.TryParse(key, NumberStyles.None, CultureInfo.InvariantCulture, out _) && separator > 0
+                ? new(value[..separator].Trim(), value[(separator + 1)..].Trim())
+                : new(key, value);
+        }
     }
 
     /// <summary>

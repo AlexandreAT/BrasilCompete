@@ -10,7 +10,9 @@ public sealed class WikipediaOptions
 
     public List<WikipediaPageOptions> FootballPages { get; set; } = [];
 
-    /// <summary>Chaves de simples de torneios de tênis, com o período de cada torneio.</summary>
+    /// <summary>
+    /// Chaves no formato do tênis (tênis e tênis de mesa), com a modalidade e o período de cada torneio.
+    /// </summary>
     public List<WikipediaPageOptions> TennisDraws { get; set; } = [];
 
     public SourceHttpOptions Http { get; set; } = new();

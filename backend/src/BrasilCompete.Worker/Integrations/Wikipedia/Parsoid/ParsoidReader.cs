@@ -22,6 +22,7 @@ public static partial class ParsoidReader
         var document = new HtmlParser().ParseDocument(html);
         var templates = new List<ParsoidTemplate>();
         string? heading = null;
+        string? topHeading = null;
         int? headingYear = null;
 
         foreach (var element in document.All)
@@ -31,6 +32,7 @@ public static partial class ParsoidReader
                 var text = element.TextContent.Trim();
                 headingYear = ReadYear(text) ?? headingYear;
                 heading = GenericHeadings.Contains(text) ? heading : text;
+                topHeading = element.LocalName == "h2" ? text : topHeading;
                 continue;
             }
 
@@ -44,7 +46,7 @@ public static partial class ParsoidReader
             {
                 if (nameFilter(name))
                 {
-                    templates.Add(new ParsoidTemplate(name, parameters, heading, headingYear));
+                    templates.Add(new ParsoidTemplate(name, parameters, heading, headingYear, topHeading));
                 }
             }
         }

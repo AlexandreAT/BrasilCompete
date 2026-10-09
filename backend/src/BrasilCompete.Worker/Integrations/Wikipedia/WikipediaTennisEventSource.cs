@@ -5,7 +5,10 @@ using Microsoft.Extensions.Options;
 
 namespace BrasilCompete.Worker.Integrations.Wikipedia;
 
-/// <summary>Tênis pelas chaves da Wikipedia, para os torneios do catálogo que cruzam a janela.</summary>
+/// <summary>
+/// Tênis e tênis de mesa pelas chaves da Wikipedia, para os torneios do catálogo que cruzam a janela.
+/// Só as chaves de simples: as de duplas são contadas e ignoradas.
+/// </summary>
 public sealed class WikipediaTennisEventSource(
     WikipediaClient client,
     IOptions<WikipediaOptions> options,
@@ -39,9 +42,9 @@ public sealed class WikipediaTennisEventSource(
             }
 
             var matches = TennisDrawReader.Read(html);
-            var mapped = matches.Select(match => TennisDrawMapper.ToEvent(match, draw, retrievedAt)).OfType<SportEvent>().ToList();
-            events.AddRange(mapped);
-            notes.Add($"{draw.Title}: {matches.Count} confrontos na chave ({matches.Count(match => match.First is null || match.Second is null)} com um lado indefinido).");
+            var singles = matches.Where(match => !match.IsDoubles).ToList();
+            events.AddRange(singles.Select(match => TennisDrawMapper.ToEvent(match, draw, retrievedAt)).OfType<SportEvent>());
+            notes.Add($"{draw.Title}: {singles.Count} confrontos de simples ({singles.Count(match => match.First is null || match.Second is null)} com um lado indefinido); {matches.Count - singles.Count} de duplas ignorados.");
         }
 
         return new SourceCollection(events, warnings, notes);
