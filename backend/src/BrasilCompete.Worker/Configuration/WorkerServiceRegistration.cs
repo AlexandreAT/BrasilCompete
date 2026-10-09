@@ -3,6 +3,7 @@ using BrasilCompete.Worker.History;
 using BrasilCompete.Worker.Http;
 using BrasilCompete.Worker.Identity;
 using BrasilCompete.Worker.Identity.Wikidata;
+using BrasilCompete.Worker.Integrations.Jolpica;
 using BrasilCompete.Worker.Integrations.Manual;
 using BrasilCompete.Worker.Output;
 using BrasilCompete.Worker.Pipeline;
@@ -44,6 +45,7 @@ public static class WorkerServiceRegistration
 
         services.AddWikidataIdentity(configuration, workerOptions);
         services.AddManualSource(configuration);
+        services.AddJolpicaSource(configuration, workerOptions);
 
         return services;
     }
