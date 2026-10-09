@@ -1,0 +1,266 @@
+{
+  "description": "Entidades de referência do teste de viabilidade (plano, fase 2). QIDs e IDs externos vêm do catálogo gerado pelo comando identity (Wikidata, 09/10/2026) e, para as equipes, das propriedades das páginas da Wikipedia. A presença conta os eventos aceitos na coleta da janela passada (2026-09-08 a 2026-10-07).",
+  "generatedAt": "2026-10-09",
+  "criteria": [
+    "Lista mínima do plano (seção 10, fase 2).",
+    "Acréscimos: Bruna Takahashi (tênis de mesa, segunda atleta da WTT), Alexandre Pantoja (MMA, luta na janela), Alexandr Fier (xadrez, Olimpíada), MIBR e paiN (eSports).",
+    "Clubes da CONMEBOL: os brasileiros ainda vivos nas quartas de final da Libertadores e da Sul-Americana na janela.",
+    "Visão Indivíduos: Gui Santos (NBA), Vinícius Júnior (Real Madrid), Raphinha (Barcelona) e Kerolin (Barcelona Femení)."
+  ],
+  "entities": [
+    {
+      "name": "Gabriel Bortoleto",
+      "kind": "Athlete",
+      "sport": "formula-1",
+      "view": "Main",
+      "wikidataId": "Q106641273",
+      "externalIds": {},
+      "wikidata": { "representsBrazil": true, "bornInBrazil": true },
+      "currentTeam": "Audi",
+      "currentTeamSource": "Jolpica (classificação de pilotos de 2026)",
+      "presence": { "inCatalog": true, "eventsInPastWindow": 6, "sources": ["jolpica"] },
+      "notes": "Classificação e corrida dos GPs da Espanha, do Azerbaijão e do Bahrein (realizado na Malásia)."
+    },
+    {
+      "name": "Hugo Calderano",
+      "kind": "Athlete",
+      "sport": "table-tennis",
+      "view": "Main",
+      "wikidataId": "Q10298743",
+      "externalIds": { "wtt": "115641" },
+      "wikidata": { "representsBrazil": true, "bornInBrazil": true },
+      "presence": { "inCatalog": true, "eventsInPastWindow": 9, "sources": ["wikipedia"] },
+      "notes": "WTT Champions Macau (cinco jogos, até a final) e China Smash (quatro jogos). Só com período: as páginas não trazem o dia de cada jogo."
+    },
+    {
+      "name": "Luis Paulo Supi",
+      "kind": "Athlete",
+      "sport": "chess",
+      "view": "Main",
+      "wikidataId": "Q27532890",
+      "externalIds": { "fide": "2106388" },
+      "wikidata": { "representsBrazil": true, "bornInBrazil": true },
+      "presence": { "inCatalog": true, "eventsInPastWindow": 10, "sources": ["lichess"] },
+      "notes": "Olimpíada de Xadrez (aberta), como membro da equipe do Brasil nos confrontos por rodada."
+    },
+    {
+      "name": "Alex Pereira",
+      "kind": "Athlete",
+      "sport": "mma",
+      "view": "Main",
+      "wikidataId": "Q15987809",
+      "externalIds": { "ufc": "alex-pereira", "sherdog": "224511", "tapology": "117305-alex-pereira" },
+      "wikidata": { "representsBrazil": true, "bornInBrazil": true },
+      "presence": { "inCatalog": true, "eventsInPastWindow": 0, "sources": [] },
+      "notes": "Sem luta na janela; está no card do UFC 335, depois dela. Homônimo no catálogo: Q4717617, jogador de futebol."
+    },
+    {
+      "name": "João Fonseca",
+      "kind": "Athlete",
+      "sport": "tennis",
+      "view": "Main",
+      "wikidataId": "Q116855500",
+      "externalIds": { "atp": "F0FV" },
+      "wikidata": { "representsBrazil": false, "bornInBrazil": true },
+      "presence": { "inCatalog": true, "eventsInPastWindow": 0, "sources": [] },
+      "notes": "Desistiu do US Open 2026 (lesão abdominal, segundo a página da chave). O Wikidata não traz o país esportivo (P1532); entra por ter nascido no Brasil."
+    },
+    {
+      "name": "Beatriz Haddad Maia",
+      "kind": "Athlete",
+      "sport": "tennis",
+      "view": "Main",
+      "wikidataId": "Q2380901",
+      "externalIds": { "wta": "318176" },
+      "wikidata": { "representsBrazil": true, "bornInBrazil": true },
+      "presence": { "inCatalog": true, "eventsInPastWindow": 0, "sources": [] },
+      "notes": "Fora das chaves principais do US Open e da China Open 2026 lidas pelo teste."
+    },
+    {
+      "name": "Duda Lisboa e Ana Patrícia",
+      "kind": "Pair",
+      "sport": "beach-volleyball",
+      "view": "Main",
+      "members": [
+        { "name": "Duda Lisboa", "wikidataId": "Q15807362", "externalIds": { "fivb": "139087" } },
+        { "name": "Ana Patrícia", "wikidataId": "Q30934952", "externalIds": { "fivb": "147073" } }
+      ],
+      "wikidata": { "representsBrazil": true, "bornInBrazil": true },
+      "presence": { "inCatalog": true, "eventsInPastWindow": 0, "sources": [] },
+      "notes": "Sem fonte de vôlei de praia no teste: o Web Service da FIVB exige identificador de aplicação (Parada A)."
+    },
+    {
+      "name": "Bruna Takahashi",
+      "kind": "Athlete",
+      "sport": "table-tennis",
+      "view": "Main",
+      "wikidataId": "Q26789878",
+      "externalIds": { "wtt": "121623" },
+      "wikidata": { "representsBrazil": false, "bornInBrazil": true },
+      "presence": { "inCatalog": true, "eventsInPastWindow": 2, "sources": ["wikipedia"] },
+      "notes": "Acréscimo. WTT Champions Macau e China Smash."
+    },
+    {
+      "name": "Alexandre Pantoja",
+      "kind": "Athlete",
+      "sport": "mma",
+      "view": "Main",
+      "wikidataId": "Q27999203",
+      "externalIds": { "ufc": "alexandre-pantoja", "sherdog": "25023", "tapology": "12767-alexandre-pantoja" },
+      "wikidata": { "representsBrazil": true, "bornInBrazil": true },
+      "presence": { "inCatalog": true, "eventsInPastWindow": 1, "sources": ["wikipedia"] },
+      "notes": "Acréscimo. UFC 331 (Van x Pantoja 2)."
+    },
+    {
+      "name": "Alexandr Fier",
+      "kind": "Athlete",
+      "sport": "chess",
+      "view": "Main",
+      "wikidataId": "Q1308965",
+      "externalIds": { "fide": "2107139", "lichess": "Microwaver" },
+      "wikidata": { "representsBrazil": true, "bornInBrazil": true },
+      "presence": { "inCatalog": true, "eventsInPastWindow": 10, "sources": ["lichess"] },
+      "notes": "Acréscimo. Olimpíada de Xadrez (aberta)."
+    },
+    {
+      "name": "Seleção brasileira masculina de futebol",
+      "kind": "NationalTeam",
+      "sport": "football",
+      "view": "Main",
+      "wikidataId": "Q83459",
+      "externalIds": { "enwiki": "Brazil national football team" },
+      "presence": { "eventsInPastWindow": 3, "sources": ["wikipedia"] },
+      "notes": "Amistosos de 25/09, 29/09 e 03/10."
+    },
+    {
+      "name": "Seleção brasileira feminina de futebol",
+      "kind": "NationalTeam",
+      "sport": "football",
+      "view": "Main",
+      "wikidataId": "Q757014",
+      "externalIds": { "enwiki": "Brazil women's national football team" },
+      "presence": { "eventsInPastWindow": 0, "sources": [] },
+      "notes": "Sem jogo na janela; os próximos são em 10 e 13/10 contra a Argentina."
+    },
+    {
+      "name": "Seleção brasileira masculina de vôlei",
+      "kind": "NationalTeam",
+      "sport": "volleyball",
+      "view": "Main",
+      "wikidataId": "Q899281",
+      "externalIds": { "enwiki": "Brazil men's national volleyball team" },
+      "presence": { "eventsInPastWindow": 0, "sources": [] },
+      "notes": "Sem fonte de vôlei no teste (FIVB na Parada A)."
+    },
+    {
+      "name": "Seleção brasileira feminina de vôlei",
+      "kind": "NationalTeam",
+      "sport": "volleyball",
+      "view": "Main",
+      "wikidataId": "Q899252",
+      "externalIds": { "enwiki": "Brazil women's national volleyball team" },
+      "presence": { "eventsInPastWindow": 0, "sources": [] },
+      "notes": "Sem fonte de vôlei no teste (FIVB na Parada A)."
+    },
+    {
+      "name": "LOUD",
+      "kind": "Organization",
+      "sport": "esports-valorant",
+      "view": "Main",
+      "wikidataId": "Q104283618",
+      "externalIds": { "enwiki": "Loud (esports)", "liquipedia": "LOUD" },
+      "presence": { "eventsInPastWindow": 4, "sources": ["liquipedia"] },
+      "notes": "VALORANT Champions 2026 (caso de validação do plano): três jogos de grupo e um dos playoffs. O catálogo de identidade só cobre pessoas; o país vem do infobox da Liquipedia."
+    },
+    {
+      "name": "FURIA",
+      "kind": "Organization",
+      "sport": "esports-cs2",
+      "view": "Main",
+      "wikidataId": "Q97374113",
+      "externalIds": { "enwiki": "Furia Esports", "liquipedia": "FURIA" },
+      "presence": { "eventsInPastWindow": 5, "sources": ["liquipedia"] },
+      "notes": "StarLadder StarSeries Fall 2026."
+    },
+    {
+      "name": "MIBR",
+      "kind": "Organization",
+      "sport": "esports-cs2",
+      "view": "Main",
+      "wikidataId": "Q1883226",
+      "externalIds": { "enwiki": "Made in Brazil (esports)", "liquipedia": "MIBR" },
+      "presence": { "eventsInPastWindow": 4, "sources": ["liquipedia"] },
+      "notes": "Acréscimo. StarLadder StarSeries Fall 2026."
+    },
+    {
+      "name": "paiN Gaming",
+      "kind": "Organization",
+      "sport": "esports-lol",
+      "view": "Main",
+      "wikidataId": "Q30928893",
+      "externalIds": { "enwiki": "PaiN Gaming" },
+      "presence": { "eventsInPastWindow": 0, "sources": [] },
+      "notes": "Acréscimo. Sem partida internacional na janela nos torneios do catálogo."
+    },
+    { "name": "Fluminense", "kind": "Club", "sport": "football", "view": "Main", "wikidataId": "Q80987", "externalIds": { "enwiki": "Fluminense FC" }, "presence": { "eventsInPastWindow": 2, "sources": ["wikipedia"] }, "notes": "Quartas da Libertadores." },
+    { "name": "Palmeiras", "kind": "Club", "sport": "football", "view": "Main", "wikidataId": "Q80964", "externalIds": { "enwiki": "SE Palmeiras" }, "presence": { "eventsInPastWindow": 2, "sources": ["wikipedia"] }, "notes": "Quartas da Libertadores." },
+    { "name": "Corinthians", "kind": "Club", "sport": "football", "view": "Main", "wikidataId": "Q35933", "externalIds": { "enwiki": "SC Corinthians Paulista" }, "presence": { "eventsInPastWindow": 2, "sources": ["wikipedia"] }, "notes": "Quartas da Libertadores." },
+    { "name": "Flamengo", "kind": "Club", "sport": "football", "view": "Main", "wikidataId": "Q17479", "externalIds": { "enwiki": "CR Flamengo" }, "presence": { "eventsInPastWindow": 2, "sources": ["wikipedia"] }, "notes": "Quartas da Libertadores." },
+    { "name": "Vasco da Gama", "kind": "Club", "sport": "football", "view": "Main", "wikidataId": "Q5014111", "externalIds": { "enwiki": "CR Vasco da Gama" }, "presence": { "eventsInPastWindow": 2, "sources": ["wikipedia"] }, "notes": "Quartas da Sul-Americana." },
+    { "name": "São Paulo", "kind": "Club", "sport": "football", "view": "Main", "wikidataId": "Q38568", "externalIds": { "enwiki": "São Paulo FC" }, "presence": { "eventsInPastWindow": 2, "sources": ["wikipedia"] }, "notes": "Quartas da Sul-Americana." },
+    { "name": "Santos", "kind": "Club", "sport": "football", "view": "Main", "wikidataId": "Q80955", "externalIds": { "enwiki": "Santos FC" }, "presence": { "eventsInPastWindow": 2, "sources": ["wikipedia"] }, "notes": "Quartas da Sul-Americana, contra o Atlético Mineiro." },
+    { "name": "Atlético Mineiro", "kind": "Club", "sport": "football", "view": "Main", "wikidataId": "Q270995", "externalIds": { "enwiki": "Clube Atlético Mineiro" }, "presence": { "eventsInPastWindow": 2, "sources": ["wikipedia"] }, "notes": "Quartas da Sul-Americana, contra o Santos." },
+    {
+      "name": "Gui Santos",
+      "kind": "Athlete",
+      "sport": "basketball",
+      "view": "Individuals",
+      "wikidataId": "Q107093740",
+      "externalIds": { "nba": "1630611", "basketball-reference": "s/santogu01" },
+      "wikidata": { "representsBrazil": true, "bornInBrazil": true },
+      "currentTeam": null,
+      "currentTeamSource": "O Wikidata não tem time atual (P54 sem data de fim); virá da balldontlie (Parada A).",
+      "presence": { "inCatalog": true, "eventsInPastWindow": 0, "sources": [] },
+      "notes": "Sem fonte de NBA antes da Parada A. Homônimo no catálogo: Q136623988, só com cidadania."
+    },
+    {
+      "name": "Vinícius Júnior",
+      "kind": "Athlete",
+      "sport": "football",
+      "view": "Individuals",
+      "wikidataId": "Q28973866",
+      "externalIds": { "transfermarkt": "371998" },
+      "wikidata": { "representsBrazil": true, "bornInBrazil": true },
+      "currentTeam": "Real Madrid",
+      "currentTeamSource": "Wikidata (P54 sem data de fim)",
+      "presence": { "inCatalog": true, "eventsInPastWindow": 0, "sources": [] },
+      "notes": "Visão Indivíduos do futebol depende da football-data.org (opcional, Parada A)."
+    },
+    {
+      "name": "Raphinha",
+      "kind": "Athlete",
+      "sport": "football",
+      "view": "Individuals",
+      "wikidataId": "Q28861547",
+      "externalIds": { "transfermarkt": "411295" },
+      "wikidata": { "representsBrazil": true, "bornInBrazil": true },
+      "currentTeam": "FC Barcelona",
+      "currentTeamSource": "Wikidata (P54 sem data de fim)",
+      "presence": { "inCatalog": true, "eventsInPastWindow": 0, "sources": [] },
+      "notes": "Nome ambíguo: o catálogo tem outro Raphinha (Q24451790, nascido em 1993, Internacional). Sem ID externo da fonte, a busca por nome cairia nos dois."
+    },
+    {
+      "name": "Kerolin",
+      "kind": "Athlete",
+      "sport": "football",
+      "view": "Individuals",
+      "wikidataId": "Q66311599",
+      "externalIds": {},
+      "wikidata": { "representsBrazil": false, "bornInBrazil": true },
+      "currentTeam": "FC Barcelona Femení",
+      "currentTeamSource": "Wikidata (P54 desde 2026-08-01)",
+      "presence": { "inCatalog": true, "eventsInPastWindow": 0, "sources": [] },
+      "notes": "Futebol feminino no exterior. O Wikidata não traz o país esportivo (P1532) nem ID do Transfermarkt; entra por ter nascido no Brasil."
+    }
+  ]
+}
