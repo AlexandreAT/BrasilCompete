@@ -32,6 +32,15 @@ public static class ValidationReportBuilder
         }
 
         builder.AppendLine();
+        builder.AppendLine("## Encontrados com nome divergente (conferir)");
+        builder.AppendLine();
+
+        foreach (var match in matches.Where(match => match.NameMismatch))
+        {
+            builder.AppendLine(CultureInfo.InvariantCulture, $"- linha {match.Row.Line}: gabarito {string.Join(" x ", match.Row.Participants)}; gerado {string.Join(" x ", match.Event!.Participants.Select(participant => participant.Name))}");
+        }
+
+        builder.AppendLine();
         builder.AppendLine("## Data ou horário divergentes");
         builder.AppendLine();
 
@@ -58,8 +67,8 @@ public static class ValidationReportBuilder
     {
         builder.AppendLine(CultureInfo.InvariantCulture, $"## {title}");
         builder.AppendLine();
-        builder.AppendLine("| Grupo | Gabarito | Encontrados | Cobertura | Data correta | Horário correto | Horário perdido |");
-        builder.AppendLine("| --- | --- | --- | --- | --- | --- | --- |");
+        builder.AppendLine("| Grupo | Gabarito | Encontrados | Cobertura | Nome divergente | Data correta | Horário correto | Horário perdido |");
+        builder.AppendLine("| --- | --- | --- | --- | --- | --- | --- | --- |");
 
         foreach (var group in groups.OrderBy(group => group.Key, StringComparer.Ordinal))
         {
@@ -70,8 +79,9 @@ public static class ValidationReportBuilder
             var timed = group.Count(match => match.TimeCorrect is not null);
             var timeCorrect = group.Count(match => match.TimeCorrect == true);
             var lostTime = group.Count(match => match.LostTime);
+            var nameMismatch = group.Count(match => match.NameMismatch);
 
-            builder.AppendLine(CultureInfo.InvariantCulture, $"| {group.Key} | {total} | {found} | {Percent(found, total)} | {dateCorrect}/{dated} ({Percent(dateCorrect, dated)}) | {timeCorrect}/{timed} ({Percent(timeCorrect, timed)}) | {lostTime} |");
+            builder.AppendLine(CultureInfo.InvariantCulture, $"| {group.Key} | {total} | {found} | {Percent(found, total)} | {nameMismatch} | {dateCorrect}/{dated} ({Percent(dateCorrect, dated)}) | {timeCorrect}/{timed} ({Percent(timeCorrect, timed)}) | {lostTime} |");
         }
 
         builder.AppendLine();

@@ -18,16 +18,37 @@ public static class ReferenceMatcher
     public static IReadOnlyList<ReferenceMatch> Match(IReadOnlyList<ReferenceRow> rows, IReadOnlyList<SportEvent> events) =>
         rows.Where(row => row.Date is not null).Select(row => Match(row, events)).ToList();
 
+    /// <summary>
+    /// Primeiro com todos os participantes. Sem isso, aceita o evento em que só parte dos nomes bate, desde que ele
+    /// seja o único candidato no dia mais próximo (um lutador luta uma vez por evento; no tênis de mesa, com vários
+    /// jogos no mesmo período, o adversário continua obrigatório).
+    /// </summary>
     public static ReferenceMatch Match(ReferenceRow row, IReadOnlyList<SportEvent> events)
     {
-        var candidate = events
+        var candidates = events
             .Where(sportEvent => string.Equals(sportEvent.Sport.ToSlug(), row.Sport, StringComparison.OrdinalIgnoreCase))
-            .Select(sportEvent => (Event: sportEvent, Distance: DateDistance(row, sportEvent)))
-            .Where(item => item.Distance is <= 1 && HasAllParticipants(row, item.Event))
+            .Select(sportEvent => (Event: sportEvent, Distance: DateDistance(row, sportEvent), Matched: MatchedParticipants(row, sportEvent)))
+            .Where(item => item.Distance is <= 1 && item.Matched > 0)
+            .ToList();
+
+        var candidate = candidates
+            .Where(item => item.Matched == row.Participants.Count)
             .OrderBy(item => item.Distance)
             .ThenByDescending(item => StageMatches(row, item.Event))
             .Select(item => item.Event)
             .FirstOrDefault();
+        var nameMismatch = false;
+
+        if (candidate is null && candidates.Count > 0)
+        {
+            var closest = candidates.Where(item => item.Distance == candidates.Min(other => other.Distance)).ToList();
+
+            if (closest.Count == 1)
+            {
+                candidate = closest[0].Event;
+                nameMismatch = true;
+            }
+        }
 
         if (candidate is null)
         {
@@ -40,7 +61,7 @@ public static class ReferenceMatcher
                 && BrasiliaTime.ToDate(start) == row.Date
             : (bool?)null;
 
-        return new ReferenceMatch(row, candidate, dateCorrect, timeCorrect);
+        return new ReferenceMatch(row, candidate, dateCorrect, timeCorrect, nameMismatch);
     }
 
     /// <summary>Dias entre o gabarito e o evento; 0 quando a data do gabarito cai no período do evento.</summary>
@@ -59,7 +80,7 @@ public static class ReferenceMatcher
         };
     }
 
-    private static bool HasAllParticipants(ReferenceRow row, SportEvent sportEvent)
+    private static int MatchedParticipants(ReferenceRow row, SportEvent sportEvent)
     {
         var names = sportEvent.Participants
             .SelectMany(participant => new[] { participant.Name, participant.Team }.Concat(participant.Members.Select(member => member.Name)))
@@ -69,8 +90,7 @@ public static class ReferenceMatcher
             .Where(name => name.Length > 0)
             .ToList();
 
-        return row.Participants.Count > 0
-            && row.Participants.Select(TextNormalizer.NormalizeName).All(expected => names.Any(name => SameName(expected, name)));
+        return row.Participants.Select(TextNormalizer.NormalizeName).Count(expected => names.Any(name => SameName(expected, name)));
     }
 
     private static bool StageMatches(ReferenceRow row, SportEvent sportEvent) =>

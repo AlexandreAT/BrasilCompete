@@ -84,11 +84,24 @@ public sealed class ReferenceValidationTests
     }
 
     [Fact]
-    public void Match_WithoutTheOpponent_IsNotFound()
+    public void Match_OpponentWithAnotherName_IsFoundAndFlaggedWhenUnique()
     {
-        var sportEvent = Matchup(Sport.Mma, Schedule.OnDate(new DateOnly(2026, 9, 19)), "wikipedia", Athlete("Joshua Van"), Athlete("Alexandre Pantoja"));
+        var sportEvent = Matchup(Sport.Mma, Schedule.OnDate(new DateOnly(2026, 9, 19)), "wikipedia", Athlete("Patrício Pitbull"), Athlete("Choi Doo-ho"));
 
-        Assert.False(ReferenceMatcher.Match(Row("mma", "Alexandre Pantoja x Kai Kara-France", new DateOnly(2026, 9, 19), null), [sportEvent]).Found);
+        var match = ReferenceMatcher.Match(Row("mma", "Patricio Pitbull x Dooho Choi", new DateOnly(2026, 9, 19), null), [sportEvent]);
+
+        Assert.Same(sportEvent, match.Event);
+        Assert.True(match.NameMismatch);
+    }
+
+    [Fact]
+    public void Match_OnlyTheBrazilianInSeveralPeriodEvents_IsNotFound()
+    {
+        var period = Schedule.InPeriod(new DateOnly(2026, 9, 8), new DateOnly(2026, 9, 13));
+        var firstRound = Matchup(Sport.TableTennis, period, "wikipedia", Athlete("Nicholas Lum"), Athlete("Hugo Calderano"));
+        var final = Matchup(Sport.TableTennis, period, "wikipedia", Athlete("Hugo Calderano"), Athlete("Truls Möregårdh"));
+
+        Assert.False(ReferenceMatcher.Match(Row("table-tennis", "Hugo Calderano x Anton Källberg", new DateOnly(2026, 9, 12), null), [firstRound, final]).Found);
     }
 
     private static ReferenceRow Row(string sport, string participants, DateOnly date, TimeOnly? time) =>
