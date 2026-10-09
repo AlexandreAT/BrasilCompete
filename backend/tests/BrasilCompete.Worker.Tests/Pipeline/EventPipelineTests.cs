@@ -14,7 +14,7 @@ public sealed class EventPipelineTests
     private static readonly DateWindow October = new(new DateOnly(2026, 10, 1), new DateOnly(2026, 10, 31));
 
     private readonly EventPipeline pipeline = new(
-        new IdentityResolver(),
+        new IdentityResolver(IdentityIndex.Empty),
         new ViewClassifier(),
         new EventDeduplicator(new SourcePriority(Options.Create(new WorkerOptions()))));
 

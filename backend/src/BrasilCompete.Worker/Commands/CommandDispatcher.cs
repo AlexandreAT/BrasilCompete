@@ -1,11 +1,13 @@
 using BrasilCompete.Worker.Domain;
 
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace BrasilCompete.Worker.Commands;
 
+/// <summary>Escolhe o comando pela linha de comando. Cada comando só é criado quando é usado.</summary>
 public sealed class CommandDispatcher(
-    CollectCommand collect,
+    IServiceProvider services,
     TimeProvider timeProvider,
     ILogger<CommandDispatcher> logger)
 {
@@ -13,6 +15,7 @@ public sealed class CommandDispatcher(
         Uso:
           collect --from aaaa-mm-dd --to aaaa-mm-dd [--sources a,b] [--no-cache]
           collect --days N [--sources a,b] [--no-cache]
+          identity            gera o catálogo de identidade a partir do Wikidata
 
         Exemplo:
           dotnet run --project backend/src/BrasilCompete.Worker -- collect --from 2026-09-01 --to 2026-09-30
@@ -29,11 +32,12 @@ public sealed class CommandDispatcher(
 
         try
         {
-            var today = BrasiliaTime.ToDate(timeProvider.GetUtcNow());
-
             return args[0] switch
             {
-                "collect" => await collect.RunAsync(CollectCommandOptions.Parse(args[1..], today), cancellationToken),
+                "collect" => await services.GetRequiredService<CollectCommand>().RunAsync(
+                    CollectCommandOptions.Parse(args[1..], BrasiliaTime.ToDate(timeProvider.GetUtcNow())),
+                    cancellationToken),
+                "identity" => await services.GetRequiredService<IdentityCommand>().RunAsync(cancellationToken),
                 _ => throw new CommandLineException($"Comando desconhecido: {args[0]}"),
             };
         }

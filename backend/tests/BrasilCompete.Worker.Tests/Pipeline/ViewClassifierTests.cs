@@ -8,7 +8,7 @@ namespace BrasilCompete.Worker.Tests.Pipeline;
 
 public sealed class ViewClassifierTests
 {
-    private readonly IdentityResolver resolver = new();
+    private readonly IdentityResolver resolver = new(IdentityIndex.Empty);
     private readonly ViewClassifier classifier = new();
 
     [Fact]

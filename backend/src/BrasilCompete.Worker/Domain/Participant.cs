@@ -26,6 +26,9 @@ public sealed record Participant
 
     public Confidence IdentityConfidence { get; init; } = Confidence.High;
 
+    /// <summary>Só a cidadania liga o atleta ao Brasil: não entra na agenda, mas é medido (plano, seção 4.1).</summary>
+    public bool BrazilianCitizenshipOnly { get; init; }
+
     public IReadOnlyDictionary<string, string> ExternalIds { get; init; } = NoExternalIds;
 
     public IReadOnlyList<Participant> Members { get; init; } = [];

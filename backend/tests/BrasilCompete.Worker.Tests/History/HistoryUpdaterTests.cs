@@ -57,6 +57,18 @@ public sealed class HistoryUpdaterTests
     }
 
     [Fact]
+    public void Apply_EventFromASourceThatDidNotRun_IsNotMarkedAsMissing()
+    {
+        var history = new EventHistoryFile();
+        HistoryUpdater.Apply(history, [Santos(Schedule.OnDate(new DateOnly(2026, 9, 16)))], Window, FirstRun);
+
+        var result = HistoryUpdater.Apply(history, [], Window, SecondRun, new HashSet<string> { "outra-fonte" });
+
+        Assert.Equal(0, result.Missing);
+        Assert.Null(Assert.Single(history.Events).Value.MissingSinceUtc);
+    }
+
+    [Fact]
     public void Apply_UnchangedEvent_IsCountedAsUnchanged()
     {
         var history = new EventHistoryFile();

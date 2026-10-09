@@ -17,7 +17,7 @@ public sealed class OutputWriter(BackendPaths paths)
         var runDirectory = Path.Combine(paths.OutputDirectory, "runs", summary.RunId);
         Directory.CreateDirectory(runDirectory);
 
-        var events = new EventsFile(summary.RunId, summary.FinishedAtUtc, summary.Window, result.Events, result.Conflicts);
+        var events = new EventsFile(summary.RunId, summary.FinishedAtUtc, summary.Window, result.Events, result.Conflicts, result.Merges);
 
         await WriteJsonAsync(Path.Combine(runDirectory, "events.json"), events, cancellationToken);
         await WriteJsonAsync(Path.Combine(runDirectory, "discarded.json"), result.Discarded, cancellationToken);

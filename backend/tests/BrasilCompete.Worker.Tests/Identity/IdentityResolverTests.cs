@@ -7,7 +7,7 @@ namespace BrasilCompete.Worker.Tests.Identity;
 
 public sealed class IdentityResolverTests
 {
-    private readonly IdentityResolver resolver = new();
+    private readonly IdentityResolver resolver = new(IdentityIndex.Empty);
 
     [Theory]
     [InlineData(ParticipantKind.Athlete, BrazilianReason.RepresentsBrazil)]

@@ -33,15 +33,22 @@ public sealed class EventDeduplicator(SourcePriority priority)
 
         var merged = new List<SportEvent>(groups.Count);
         var conflicts = new List<MergeConflict>();
+        var merges = new List<MergedEvent>();
 
         foreach (var group in groups)
         {
             var result = group.Count == 1 ? group[0] : MergeGroup(group);
             merged.Add(result);
             conflicts.AddRange(FindConflicts(result.Id, group));
+
+            if (group.Count > 1)
+            {
+                var sources = group.Select(sportEvent => $"{SourceOf(sportEvent)}:{sportEvent.Sources[0].ExternalId}").ToList();
+                merges.Add(new MergedEvent(result.Id, sources, group.Select(SourceOf).Distinct().Count() > 1));
+            }
         }
 
-        return new DeduplicationResult(merged, conflicts, events.Count - merged.Count);
+        return new DeduplicationResult(merged, conflicts, merges);
     }
 
     public static bool IsSameEvent(SportEvent first, SportEvent second) =>

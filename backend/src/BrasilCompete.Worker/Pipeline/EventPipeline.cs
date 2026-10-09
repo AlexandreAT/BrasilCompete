@@ -34,7 +34,7 @@ public sealed class EventPipeline(IdentityResolver identity, ViewClassifier clas
         var deduplicated = deduplicator.Merge(accepted);
         var ordered = deduplicated.Events.OrderBy(SortKey).ThenBy(sportEvent => sportEvent.Id, StringComparer.Ordinal).ToList();
 
-        return new PipelineResult(collected.Count, ordered, discarded, deduplicated.Conflicts, deduplicated.MergedCount);
+        return new PipelineResult(collected.Count, ordered, discarded, deduplicated.Conflicts, deduplicated.Merges);
     }
 
     private static DiscardReason? GetDiscardReason(SportEvent sportEvent, EventView? view, DateWindow window)

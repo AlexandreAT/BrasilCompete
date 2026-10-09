@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Text.Json.Serialization;
 
 using BrasilCompete.Worker.Domain;
 
@@ -27,6 +28,9 @@ public sealed record EventSnapshot
 
     /// <summary>Dia de referência, para escolher o evento mais próximo quando o identificador muda.</summary>
     public DateOnly? ReferenceDate => Date ?? PeriodStart;
+
+    [JsonIgnore]
+    public IReadOnlyList<string> SourceNames => Sources.Split(", ", StringSplitOptions.RemoveEmptyEntries);
 
     public static EventSnapshot From(SportEvent sportEvent) => new()
     {

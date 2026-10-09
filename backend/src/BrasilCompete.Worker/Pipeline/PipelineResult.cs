@@ -7,4 +7,7 @@ public sealed record PipelineResult(
     IReadOnlyList<SportEvent> Events,
     IReadOnlyList<DiscardedEvent> Discarded,
     IReadOnlyList<MergeConflict> Conflicts,
-    int MergedCount);
+    IReadOnlyList<MergedEvent> Merges)
+{
+    public int MergedCount => Merges.Sum(merge => merge.Sources.Count - 1);
+}

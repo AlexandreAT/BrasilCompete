@@ -13,8 +13,9 @@ public sealed class RequestMetricsHandler(string source, RequestMetrics metrics)
 
             return response;
         }
-        catch (HttpRequestException)
+        catch (Exception exception) when (exception is HttpRequestException or OperationCanceledException)
         {
+            // Falha de rede ou tempo esgotado: conta como falha (o cancelamento pelo usuário também passa por aqui).
             metrics.Record(source, null);
             throw;
         }

@@ -2,6 +2,7 @@ using BrasilCompete.Worker.Commands;
 using BrasilCompete.Worker.History;
 using BrasilCompete.Worker.Http;
 using BrasilCompete.Worker.Identity;
+using BrasilCompete.Worker.Identity.Wikidata;
 using BrasilCompete.Worker.Integrations.Manual;
 using BrasilCompete.Worker.Output;
 using BrasilCompete.Worker.Pipeline;
@@ -15,7 +16,9 @@ public static class WorkerServiceRegistration
 {
     public static IServiceCollection AddWorker(this IServiceCollection services, IConfiguration configuration)
     {
-        services.Configure<WorkerOptions>(configuration.GetSection(WorkerOptions.SectionName));
+        var workerSection = configuration.GetSection(WorkerOptions.SectionName);
+        var workerOptions = workerSection.Get<WorkerOptions>() ?? new WorkerOptions();
+        services.Configure<WorkerOptions>(workerSection);
 
         services.AddSingleton(TimeProvider.System);
         services.AddSingleton(_ => BackendPaths.Discover());
@@ -34,9 +37,12 @@ public static class WorkerServiceRegistration
         services.AddSingleton<HistoryUpdater>();
         services.AddSingleton<OutputWriter>();
 
+        services.AddSingleton<SourceRunner>();
         services.AddSingleton<CollectCommand>();
+        services.AddSingleton<IdentityCommand>();
         services.AddSingleton<CommandDispatcher>();
 
+        services.AddWikidataIdentity(configuration, workerOptions);
         services.AddManualSource(configuration);
 
         return services;

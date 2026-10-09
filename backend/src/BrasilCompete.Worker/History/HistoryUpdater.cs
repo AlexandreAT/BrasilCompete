@@ -6,6 +6,7 @@ namespace BrasilCompete.Worker.History;
 /// <summary>
 /// Compara a execução atual com o histórico. Quando o identificador muda (o evento ganhou data ou mudou de dia),
 /// reconhece o evento pela chave sem data e registra a mudança, em vez de contá-lo como novo.
+/// Um evento só é marcado como ausente se todas as suas fontes rodaram até o fim nesta execução.
 /// </summary>
 public sealed class HistoryUpdater(EventHistoryStore store)
 {
@@ -13,20 +14,23 @@ public sealed class HistoryUpdater(EventHistoryStore store)
         IReadOnlyList<SportEvent> events,
         DateWindow window,
         DateTimeOffset runAtUtc,
+        IReadOnlySet<string> completeSources,
         CancellationToken cancellationToken)
     {
         var history = await store.LoadAsync(cancellationToken);
-        var result = Apply(history, events, window, runAtUtc);
+        var result = Apply(history, events, window, runAtUtc, completeSources);
         await store.SaveAsync(history, cancellationToken);
 
         return result;
     }
 
+    /// <param name="completeSources">Fontes que rodaram com sucesso; <c>null</c> considera todas.</param>
     public static HistoryUpdateResult Apply(
         EventHistoryFile history,
         IReadOnlyList<SportEvent> events,
         DateWindow window,
-        DateTimeOffset runAtUtc)
+        DateTimeOffset runAtUtc,
+        IReadOnlySet<string>? completeSources = null)
     {
         var entries = history.Events;
         var currentIds = events.Select(sportEvent => sportEvent.Id).ToHashSet(StringComparer.Ordinal);
@@ -76,7 +80,7 @@ public sealed class HistoryUpdater(EventHistoryStore store)
             }
         }
 
-        var missing = MarkMissing(entries, currentIds, window, runAtUtc);
+        var missing = MarkMissing(entries, currentIds, window, runAtUtc, completeSources);
 
         return new HistoryUpdateResult(created, changed, unchanged, missing);
     }
@@ -96,13 +100,14 @@ public sealed class HistoryUpdater(EventHistoryStore store)
         Dictionary<string, EventHistoryEntry> entries,
         HashSet<string> currentIds,
         DateWindow window,
-        DateTimeOffset runAtUtc)
+        DateTimeOffset runAtUtc,
+        IReadOnlySet<string>? completeSources)
     {
         var missing = 0;
 
         foreach (var (id, entry) in entries.ToList())
         {
-            if (currentIds.Contains(id) || !IsInside(window, entry.Snapshot))
+            if (currentIds.Contains(id) || !IsInside(window, entry.Snapshot) || !RanCompletely(entry.Snapshot, completeSources))
             {
                 continue;
             }
@@ -125,6 +130,9 @@ public sealed class HistoryUpdater(EventHistoryStore store)
 
     private static bool HasDate(EventSnapshot snapshot) =>
         snapshot.Precision is SchedulePrecision.DateAndTime or SchedulePrecision.DateOnly;
+
+    private static bool RanCompletely(EventSnapshot snapshot, IReadOnlySet<string>? completeSources) =>
+        completeSources is null || snapshot.SourceNames.All(completeSources.Contains);
 
     private static bool IsInside(DateWindow window, EventSnapshot snapshot) =>
         snapshot.ReferenceDate is not { } date || (date >= window.From && date <= window.To);
