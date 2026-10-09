@@ -70,8 +70,11 @@ public static class FootballBoxMapper
         };
     }
 
+    /// <summary>"Football box", "Football box collapsible" e os redirecionamentos sem espaço ("footballbox collapsible").</summary>
     public static bool IsFootballBox(string templateName) =>
-        templateName.StartsWith("Football box", StringComparison.OrdinalIgnoreCase);
+        templateName.Replace(" ", string.Empty, StringComparison.Ordinal)
+            .Replace("_", string.Empty, StringComparison.Ordinal)
+            .StartsWith("footballbox", StringComparison.OrdinalIgnoreCase);
 
     private static Schedule ToSchedule(DateOnly? date, (TimeOnly Time, TimeSpan Offset)? time)
     {

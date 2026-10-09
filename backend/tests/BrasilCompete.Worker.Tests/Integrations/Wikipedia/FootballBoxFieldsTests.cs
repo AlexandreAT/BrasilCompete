@@ -23,6 +23,15 @@ public sealed class FootballBoxFieldsTests
         Assert.Null(FootballBoxFields.ParseDate(wikitext, year));
 
     [Theory]
+    [InlineData("Football box", true)]
+    [InlineData("Football box collapsible", true)]
+    [InlineData("footballbox collapsible", true)]
+    [InlineData("Footballbox_collapsible", true)]
+    [InlineData("Football kit", false)]
+    public void IsFootballBox_AcceptsTheRedirectsWithoutSpace(string templateName, bool expected) =>
+        Assert.Equal(expected, FootballBoxMapper.IsFootballBox(templateName));
+
+    [Theory]
     [InlineData("{{UTZ|21:30|-3}}", "21:30", -3)]
     [InlineData("{{UTZ|20:30|1}}", "20:30", 1)]
     [InlineData("{{UTZ|19:00|−4}}", "19:00", -4)]
