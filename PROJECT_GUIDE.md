@@ -311,7 +311,7 @@ A inteligência artificial não deve publicar dados automaticamente sem validaç
 ## 6.3. Backend
 
 * C#;
-* .NET 9;
+* .NET 10 (LTS, com suporte até 14/11/2028);
 * ASP.NET Core;
 * Minimal APIs;
 * Entity Framework Core;
@@ -328,7 +328,7 @@ A inteligência artificial não deve publicar dados automaticamente sem validaç
 * Clientes HTTP com `HttpClientFactory`;
 * Polly ou mecanismos equivalentes de resiliência;
 * xUnit;
-* FluentAssertions;
+* Asserções do próprio xUnit (o FluentAssertions, a partir da versão 8, só é gratuito para uso não comercial ou open source);
 * Moq, quando necessário.
 
 ---
