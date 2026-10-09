@@ -32,7 +32,7 @@ public sealed class JolpicaEventSource(
                 grid = (await client.GetDriversAsync(season, cancellationToken)).Select(JolpicaMapper.ToGridEntry).ToList();
             }
 
-            events.AddRange(JolpicaMapper.ToEvents(races, grid, options.Value.Sessions, window, timeProvider.GetUtcNow()));
+            events.AddRange(JolpicaMapper.ToEvents(races, grid, options.Value.EffectiveSessions, window, timeProvider.GetUtcNow()));
         }
 
         return new SourceCollection(events, warnings);
