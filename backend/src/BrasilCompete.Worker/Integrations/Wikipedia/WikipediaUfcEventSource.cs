@@ -5,7 +5,10 @@ using Microsoft.Extensions.Options;
 
 namespace BrasilCompete.Worker.Integrations.Wikipedia;
 
-/// <summary>UFC pela Wikipedia: a lista de eventos e o card anunciado de cada evento da janela.</summary>
+/// <summary>
+/// UFC pela Wikipedia: a lista de eventos, o card anunciado de cada evento da janela e o elenco atual
+/// (país de cada lutador pela bandeira).
+/// </summary>
 public sealed class WikipediaUfcEventSource(
     WikipediaClient client,
     IOptions<WikipediaOptions> options,
@@ -14,6 +17,8 @@ public sealed class WikipediaUfcEventSource(
     public const string SourceName = "wikipedia-ufc";
 
     private const string EventListTitle = "List_of_UFC_events";
+
+    private const string RosterTitle = "List_of_current_UFC_fighters";
 
     public string Name => SourceName;
 
@@ -27,9 +32,15 @@ public sealed class WikipediaUfcEventSource(
             .DistinctBy(listing => listing.Name)
             .ToList();
 
+        var roster = listings.Count == 0
+            ? UfcRoster.Empty
+            : UfcPageReader.ReadRoster(await client.GetPageHtmlAsync(SourceName, RosterTitle, cancellationToken));
+
         var events = new List<SportEvent>();
         var warnings = new List<string>();
         var withoutCard = 0;
+        var fighters = 0;
+        var withoutCountry = 0;
 
         foreach (var listing in listings)
         {
@@ -39,18 +50,29 @@ public sealed class WikipediaUfcEventSource(
                 continue;
             }
 
-            var bouts = UfcPageReader.ReadFightCard(await client.GetPageHtmlAsync(SourceName, listing.Title.Replace(' ', '_'), cancellationToken));
+            var bouts = UfcPageReader.ReadFightCard(await client.GetPageHtmlAsync(SourceName, listing.Title.Replace(' ', '_'), cancellationToken))
+                .Select(bout => bout with { First = WithCountry(bout.First, roster), Second = WithCountry(bout.Second, roster) })
+                .ToList();
 
             if (bouts.Count == 0)
             {
                 withoutCard++;
             }
 
+            fighters += bouts.Count * 2;
+            withoutCountry += bouts.Sum(bout => (bout.First.Country is null ? 1 : 0) + (bout.Second.Country is null ? 1 : 0));
             events.AddRange(bouts.Select(bout => UfcMapper.ToEvent(listing, bout, retrievedAt)));
         }
 
-        var notes = new List<string> { $"{listings.Count} eventos na janela; {withoutCard} ainda sem card publicado." };
+        var notes = new List<string>
+        {
+            $"{listings.Count} eventos na janela; {withoutCard} ainda sem card publicado.",
+            $"{fighters} lutadores nos cards; {withoutCountry} fora do elenco atual (sem bandeira; ficam com o Wikidata). Elenco com {roster.Count} lutadores.",
+        };
 
         return new SourceCollection(events, warnings, notes);
     }
+
+    private static UfcFighter WithCountry(UfcFighter fighter, UfcRoster roster) =>
+        roster.CountryOf(fighter) is { } country ? fighter with { Country = country } : fighter;
 }

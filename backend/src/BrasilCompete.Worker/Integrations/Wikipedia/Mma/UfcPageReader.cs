@@ -1,16 +1,20 @@
 using System.Globalization;
+using System.Text.RegularExpressions;
 
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using AngleSharp.Html.Parser;
 
+using BrasilCompete.Worker.Normalization;
+
 namespace BrasilCompete.Worker.Integrations.Wikipedia.Mma;
 
 /// <summary>
-/// Lê a "List of UFC events" (eventos agendados e passados) e o card de lutas de cada evento.
-/// O card não traz bandeiras: a nacionalidade vem do catálogo do Wikidata, pelo artigo de cada lutador.
+/// Lê a "List of UFC events" (eventos agendados e passados), o card de lutas de cada evento e a
+/// "List of current UFC fighters". O card não traz bandeiras: o país vem da bandeira de cada lutador no elenco
+/// e, para quem não está nele, do catálogo do Wikidata, pelo artigo do lutador.
 /// </summary>
-public static class UfcPageReader
+public static partial class UfcPageReader
 {
     private static readonly string[] DateFormats = ["MMM d, yyyy", "MMMM d, yyyy", "MMM. d, yyyy", "d MMMM yyyy"];
 
@@ -59,6 +63,51 @@ public static class UfcPageReader
         }
 
         return bouts;
+    }
+
+    /// <summary>
+    /// País de cada lutador do elenco: em cada linha, a bandeira (<c>{{flagicon|BRA}}</c>) e o nome, na mesma célula
+    /// ou na seguinte. Só o link dessa célula conta: os outros links da linha são do evento e do adversário da última luta.
+    /// </summary>
+    public static UfcRoster ReadRoster(string html)
+    {
+        var document = new HtmlParser().ParseDocument(html);
+        var roster = new UfcRoster();
+
+        foreach (var row in document.QuerySelectorAll("tr"))
+        {
+            if (row.QuerySelector("span.flagicon") is not { } flag
+                || flag.Closest("td, th") is not { } flagCell
+                || FlagCountry(flag) is not { } country)
+            {
+                continue;
+            }
+
+            var nameCell = flagCell.TextContent.Trim().Length == 0 ? flagCell.NextElementSibling : flagCell;
+            var link = nameCell?.QuerySelectorAll("a[rel='mw:WikiLink']").FirstOrDefault(item => !flag.Contains(item));
+            var name = link?.TextContent.Trim() ?? (nameCell is null ? null : NameNoisePattern().Replace(Text(nameCell), string.Empty).Trim());
+
+            if (!string.IsNullOrEmpty(name))
+            {
+                roster.Add(name, link is null ? null : TitleOf(link), country);
+            }
+        }
+
+        return roster;
+    }
+
+    /// <summary>
+    /// Código do país pela predefinição da bandeira (<c>{{flagicon|BRA}}</c> ou <c>{{#invoke:flag|icon|BRA}}</c>)
+    /// ou, sem ela, pelo nome do país no link da imagem.
+    /// </summary>
+    private static string? FlagCountry(IElement flag)
+    {
+        var dataMw = flag.GetAttribute("data-mw") ?? string.Empty;
+        var code = CountryCodeParameterPattern().Match(dataMw);
+
+        return code.Success
+            ? code.Groups["code"].Value
+            : CountryCodes.FromEnglishName(flag.QuerySelector("a[title]")?.GetAttribute("title"));
     }
 
     private static IHtmlTableElement? FindSectionTable(IDocument document, string sectionId)
@@ -127,4 +176,11 @@ public static class UfcPageReader
 
     private static string Text(IElement element) =>
         string.Join(' ', element.TextContent.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries)).Trim();
+
+    [GeneratedRegex(@"""wt"":""(?<code>[A-Z]{3})""")]
+    private static partial Regex CountryCodeParameterPattern();
+
+    /// <summary>Notas de rodapé ("[a]", "[143]") e a marca de campeão ("(c)") que acompanham o nome.</summary>
+    [GeneratedRegex(@"\[[^\]]*\]|\(c\)")]
+    private static partial Regex NameNoisePattern();
 }

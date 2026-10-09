@@ -91,6 +91,35 @@ public sealed class WikipediaPagesTests
         Assert.Contains(bouts, bout => bout.Second.Name == "Alex Pereira");
     }
 
+    [Fact]
+    public void UfcRoster_ReadsTheFlagOfEachFighter()
+    {
+        var roster = UfcPageReader.ReadRoster(Fixtures.Read("Wikipedia", "List_of_current_UFC_fighters.html"));
+
+        Assert.Equal("BRA", roster.CountryOf(new UfcFighter("Rodolfo Vieira", "Rodolfo Vieira")));
+        Assert.Equal("BRA", roster.CountryOf(new UfcFighter("Valesca Machado", "Valesca Machado")));
+        Assert.Equal("BRA", roster.CountryOf(new UfcFighter("Joanderson Brito", "Joanderson Brito")));
+        Assert.Equal("ITA", roster.CountryOf(new UfcFighter("Marvin Vettori", "Marvin Vettori")));
+        Assert.Equal("GEO", roster.CountryOf(new UfcFighter("Giga Chikadze", "Giga Chikadze")));
+
+        // Sem artigo, vale o nome da célula; os outros links da linha (evento e adversário) não contam.
+        Assert.Equal("BRA", roster.CountryOf(new UfcFighter("Rodolfo Bellato", null)));
+        Assert.Equal("USA", roster.CountryOf(new UfcFighter("Melissa Amaya", null)));
+        Assert.Equal(7, roster.Count);
+    }
+
+    [Fact]
+    public void UfcMapper_UsesTheRosterCountry()
+    {
+        var listing = new UfcEventListing("UFC Fight Night: Rosas Jr. vs. Barcelos", "UFC Fight Night 289", new DateOnly(2026, 9, 26), null, null);
+        var bout = new UfcBout("Middleweight", new UfcFighter("Rodolfo Vieira", "Rodolfo Vieira", "BRA"), new UfcFighter("Robert Bryczek", "Robert Bryczek"), null);
+
+        var sportEvent = UfcMapper.ToEvent(listing, bout, TestEvents.RetrievedAt);
+
+        Assert.Equal("BRA", sportEvent.Participants[0].Country);
+        Assert.Null(sportEvent.Participants[1].Country);
+    }
+
     private static IReadOnlyList<SportEvent> FootballEvents(string file, WikipediaPageOptions page)
     {
         var boxes = ParsoidReader.ReadTemplates(Fixtures.Read("Wikipedia", file), FootballBoxMapper.IsFootballBox);

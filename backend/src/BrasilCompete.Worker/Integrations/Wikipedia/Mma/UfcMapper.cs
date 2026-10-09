@@ -37,6 +37,7 @@ public static class UfcMapper
     {
         Name = fighter.Name,
         Kind = ParticipantKind.Athlete,
+        Country = fighter.Country,
         ExternalIds = fighter.WikipediaTitle is null
             ? new Dictionary<string, string>()
             : new Dictionary<string, string> { [ExternalIdKeys.EnglishWikipedia] = fighter.WikipediaTitle },

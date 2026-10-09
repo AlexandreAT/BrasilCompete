@@ -18,6 +18,8 @@ Os HTMLs da Wikipedia foram recortados nas seções usadas pelos testes, para n�
 - `Brazil_womens_national_football_team.html`: seção "Results and fixtures";
 - `List_of_UFC_events.html`: seções "Scheduled events" e "Past events", com as 60 primeiras linhas de tabela;
 - `UFC_335.html`: seção "Fight card";
-- `2026_US_Open_Mens_singles.html`: chaves das seções "Finals" e "Section 1" (só as predefinições, sem o HTML renderizado).
+- `List_of_current_UFC_fighters.html`: sete linhas do elenco (com e sem artigo, e uma em que o lutador aparece como adversário);
+- `2026_US_Open_Mens_singles.html`: chaves das seções "Finals" e "Section 1" (só as predefinições, sem o HTML renderizado);
+- `WTT_Champions_Macao_2026.html`: todos os títulos de seção e todas as chaves, sem o HTML renderizado.
 
 As respostas JSON estão completas.
