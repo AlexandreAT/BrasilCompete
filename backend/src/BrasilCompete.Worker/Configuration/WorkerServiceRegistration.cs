@@ -5,6 +5,7 @@ using BrasilCompete.Worker.Identity;
 using BrasilCompete.Worker.Identity.Wikidata;
 using BrasilCompete.Worker.Integrations.Jolpica;
 using BrasilCompete.Worker.Integrations.Lichess;
+using BrasilCompete.Worker.Integrations.Liquipedia;
 using BrasilCompete.Worker.Integrations.Manual;
 using BrasilCompete.Worker.Integrations.Wikipedia;
 using BrasilCompete.Worker.Output;
@@ -50,6 +51,7 @@ public static class WorkerServiceRegistration
         services.AddJolpicaSource(configuration, workerOptions);
         services.AddLichessSource(configuration, workerOptions);
         services.AddWikipediaSources(configuration, workerOptions);
+        services.AddLiquipediaSource(configuration, workerOptions);
 
         return services;
     }
