@@ -6,6 +6,7 @@ using BrasilCompete.Worker.Identity.Wikidata;
 using BrasilCompete.Worker.Integrations.Jolpica;
 using BrasilCompete.Worker.Integrations.Lichess;
 using BrasilCompete.Worker.Integrations.Manual;
+using BrasilCompete.Worker.Integrations.Wikipedia;
 using BrasilCompete.Worker.Output;
 using BrasilCompete.Worker.Pipeline;
 
@@ -48,6 +49,7 @@ public static class WorkerServiceRegistration
         services.AddManualSource(configuration);
         services.AddJolpicaSource(configuration, workerOptions);
         services.AddLichessSource(configuration, workerOptions);
+        services.AddWikipediaSources(configuration, workerOptions);
 
         return services;
     }
