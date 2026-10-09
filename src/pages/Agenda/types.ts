@@ -1,3 +1,5 @@
+import type { Edge } from 'react-native-safe-area-context';
+
 export type CountryParticipant = {
   countryName: string;
 };
@@ -18,3 +20,5 @@ export type HomeEventSection = {
   title: string;
   events: HomeEvent[];
 };
+
+export const SAFE_AREA_EDGES: Edge[] = ['top', 'left', 'right'];

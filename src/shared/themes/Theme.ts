@@ -11,6 +11,7 @@ export const Theme = {
     softBorder: '#E8ECF2',
     disabled: '#98A2B3',
     flagFallback: '#EEF2F6',
+    heroOverlay: 'rgba(3, 25, 55, 0.34)',
   },
   fonts: {
     regular: 'InterRegular',

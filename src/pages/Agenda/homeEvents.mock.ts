@@ -1,4 +1,4 @@
-import type { HomeEventSection } from './home.types';
+import type { HomeEventSection } from './types';
 
 export const HOME_EVENT_SECTIONS: HomeEventSection[] = [
   {

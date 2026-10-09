@@ -57,7 +57,7 @@ Leia, por inteiro:
 * `README.md`;
 * `PROJECT_GUIDE.md`, com atenção especial às seções 3 (eventos, não jogos), 10 (princípios), 15 a 24 (entidades, DTOs, validação, datas, integrações, scraping, normalização, jobs, cache e logs) e 40 a 51 (segurança, erros, testes, nomenclatura, Clean Code, SOLID, orientações para IA e Definition of Done);
 * `AGENTS.md` e `CLAUDE.md`;
-* `package.json`, `app.json`, `tsconfig.json`, `eslint.config.js`, `tailwind.config.js`, `babel.config.js`, `metro.config.js` e `.gitignore`;
+* `package.json`, `app.json`, `tsconfig.json`, `eslint.config.js` e `.gitignore`;
 * todos os arquivos de `app/` e `src/`;
 * o histórico do Git (`git log`), para entender o padrão das mensagens de commit.
 
@@ -79,9 +79,9 @@ Na análise, observamos o seguinte. Confirme cada item e corrija o que estiver e
 
 * App em Expo SDK 54, Expo Router, React Native e TypeScript em modo `strict`, com o alias `@/` apontando para `src/`;
 * Os arquivos de `app/` só fazem a ligação de rotas e reexportam páginas de `src/pages` (ex.: `export { Agenda as default } from '@/pages/Agenda/Agenda';`);
-* Páginas ficam em `src/pages/<Pagina>/<Pagina>.tsx`, com componentes locais em `components/`, tipos em `*.types.ts` e dados de exemplo em `*.mock.ts`;
+* Páginas ficam em `src/pages/<Pagina>/<Pagina>.tsx`, com componentes locais em `components/` e dados de exemplo em `*.mock.ts`; cada tela ou componente tem a própria pasta, com `.tsx` (só renderização), `types.ts`, `style.ts` e o hook `use<Nome>.ts` (seção 28 do `PROJECT_GUIDE.md`, atualizada em 09/10/2026);
 * Componentes são funções com export nomeado; props e modelos usam `type`;
-* O estilo combina `className` do NativeWind (layout) com `StyleSheet.create` usando os tokens de `src/shared/themes/Theme.ts` (cores e fontes);
+* O estilo usa styled-components (`styled-components/native`) em `style.ts`, com os tokens de `src/shared/themes/Theme.ts` (cores e fontes); o NativeWind foi removido em 09/10/2026;
 * Chaves de estilos e props JSX ficam em ordem alfabética;
 * Imports ficam em grupos separados por linha em branco: bibliotecas externas, depois `@/`, depois caminhos relativos;
 * Aspas simples, ponto e vírgula e indentação de 2 espaços;

@@ -1,1 +1,1 @@
-export { App as default } from '@/App';
+export { RootLayout as default } from '@/RootLayout/RootLayout';

@@ -1,79 +1,53 @@
-import { useRouter } from 'expo-router';
 import { ChevronRight } from 'lucide-react-native';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { Fragment } from 'react';
 
-import { Theme } from '@/shared/themes/Theme';
-
-import { DaySectionHeader } from './components/DaySectionHeader';
-import { EventMatchCard } from './components/EventMatchCard';
-import { HomeHeader } from './components/HomeHeader';
-import { HomeHeroBanner } from './components/HomeHeroBanner';
-import { HOME_EVENT_SECTIONS } from './homeEvents.mock';
+import { DaySectionHeader } from './components/DaySectionHeader/DaySectionHeader';
+import { EventMatchCard } from './components/EventMatchCard/EventMatchCard';
+import { HomeHeader } from './components/HomeHeader/HomeHeader';
+import { HomeHeroBanner } from './components/HomeHeroBanner/HomeHeroBanner';
+import {
+  Content,
+  SafeArea,
+  ScreenTitle,
+  SeeAllButton,
+  SeeAllText,
+  seeAllIcon,
+  TitleRow,
+} from './style';
+import { useAgenda } from './useAgenda';
 
 export function Agenda() {
-  const router = useRouter();
+  const { eventSections, handleNotificationsPress, handleSeeAllPress } = useAgenda();
 
   return (
-    <SafeAreaView edges={['top', 'left', 'right']} style={styles.safeArea}>
-      <ScrollView
-        contentContainerStyle={styles.content}
-        showsVerticalScrollIndicator={false}
-      >
-        <HomeHeader onNotificationsPress={() => undefined} />
+    <SafeArea>
+      <Content>
+        <HomeHeader onNotificationsPress={handleNotificationsPress} />
         <HomeHeroBanner />
 
-        <View className="mt-6 flex-row items-center justify-between">
-          <Text style={styles.screenTitle}>Agenda do Brasil</Text>
+        <TitleRow>
+          <ScreenTitle>Agenda do Brasil</ScreenTitle>
 
-          <Pressable
+          <SeeAllButton
             accessibilityHint="Abre o calendário completo"
             accessibilityLabel="Ver todos os eventos"
             accessibilityRole="button"
-            className="flex-row items-center gap-1 py-2 pl-3"
-            onPress={() => router.navigate('/calendar')}
-            style={({ pressed }) => pressed && styles.pressed}
+            onPress={handleSeeAllPress}
           >
-            <Text style={styles.seeAll}>Ver todos</Text>
-            <ChevronRight color={Theme.colors.primaryNavy} size={21} strokeWidth={2.4} />
-          </Pressable>
-        </View>
+            <SeeAllText>Ver todos</SeeAllText>
+            <ChevronRight {...seeAllIcon} />
+          </SeeAllButton>
+        </TitleRow>
 
-        {HOME_EVENT_SECTIONS.map((section) => (
-          <View key={section.id}>
+        {eventSections.map((section) => (
+          <Fragment key={section.id}>
             <DaySectionHeader title={section.title} />
             {section.events.map((event) => (
               <EventMatchCard event={event} key={event.id} />
             ))}
-          </View>
+          </Fragment>
         ))}
-      </ScrollView>
-    </SafeAreaView>
+      </Content>
+    </SafeArea>
   );
 }
-
-const styles = StyleSheet.create({
-  content: {
-    paddingBottom: 24,
-    paddingHorizontal: 20,
-  },
-  pressed: {
-    opacity: 0.65,
-  },
-  safeArea: {
-    backgroundColor: Theme.colors.background,
-    flex: 1,
-  },
-  screenTitle: {
-    color: Theme.colors.primaryText,
-    flexShrink: 1,
-    fontFamily: Theme.fonts.bold,
-    fontSize: 24,
-    letterSpacing: -0.6,
-  },
-  seeAll: {
-    color: Theme.colors.primaryGreen,
-    fontFamily: Theme.fonts.semiBold,
-    fontSize: 14,
-  },
-});

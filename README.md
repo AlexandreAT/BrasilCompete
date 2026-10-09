@@ -4,8 +4,8 @@ Aplicativo mobile para centralizar eventos esportivos internacionais com
 representação brasileira.
 
 O projeto usa React Native, TypeScript, Expo SDK 54, Expo Router, TanStack Query
-e NativeWind. As decisões arquiteturais e a visão do produto estão detalhadas
-em [PROJECT_GUIDE.md](./PROJECT_GUIDE.md).
+e styled-components. As decisões arquiteturais e a visão do produto estão
+detalhadas em [PROJECT_GUIDE.md](./PROJECT_GUIDE.md).
 
 ## Requisitos
 
@@ -148,12 +148,39 @@ npm run typecheck
 ## Organização
 
 - `src/index.ts`: inicia o Expo Router;
-- `src/App.tsx`: componente principal do aplicativo;
-- `src/AppRoutes.tsx`: navegação principal;
+- `src/RootLayout/`: componente raiz (fontes, splash screen e barra de status);
+- `src/AppRoutes/`: navegação principal;
+- `src/TabRoutes/`: barra de abas;
 - `src/pages/`: páginas do aplicativo;
-- `app/`: arquivos de ligação exigidos pelo Expo Router;
+- `src/shared/`: componentes, estilos e tema reutilizados;
+- `src/utils/`: funções utilitárias;
+- `app/`: arquivos de ligação exigidos pelo Expo Router, que só reexportam
+  componentes de `src/`;
 - `assets/`: imagens e demais arquivos estáticos.
 
-Os arquivos `babel.config.js`, `metro.config.js`, `tailwind.config.js`,
-`global.css` e `nativewind-env.d.ts` são a configuração mínima necessária para
-usar NativeWind, conforme definido no guia do projeto.
+Não crie uma pasta `src/app` (nem `src/App`): o Expo Router passaria a procurar
+as rotas nela, e no Windows e no macOS maiúsculas e minúsculas são o mesmo nome.
+
+### Estrutura de telas e componentes
+
+Cada tela ou componente fica em uma pasta própria, com um arquivo por
+responsabilidade:
+
+```text
+CountryFlag/
+├── CountryFlag.tsx     só renderização
+├── types.ts            tipos, props e constantes
+├── style.ts            estilos com styled-components
+└── useCountryFlag.ts   lógica da tela ou do componente
+```
+
+- Os estilos ficam sempre no `style.ts`, com `styled-components/native`: nada de
+  estilo inline, `StyleSheet` ou componentes nativos (`View`, `Text`) estilizados
+  direto no `.tsx`.
+- Escolhas visuais que dependem de estado são decididas no hook e mapeadas no
+  `style.ts` (por exemplo, `$state: 'active' | 'inactive'`), sem condicionais
+  dentro dos estilos.
+- Os arquivos que não teriam conteúdo não são criados (um componente sem lógica
+  não tem hook).
+- O que se repete fica centralizado em `src/shared/` (tema, sombras e
+  componentes como `PlaceholderScreen`).

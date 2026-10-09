@@ -259,8 +259,7 @@ A inteligência artificial não deve publicar dados automaticamente sem validaç
 * Vite;
 * React Router;
 * TanStack Query;
-* Tailwind CSS;
-* shadcn/ui;
+* styled-components;
 * React Hook Form;
 * Zod, quando necessário para validação no frontend;
 * Cliente HTTP centralizado;
@@ -289,7 +288,7 @@ A inteligência artificial não deve publicar dados automaticamente sem validaç
 * Expo;
 * Expo Router;
 * TanStack Query;
-* NativeWind;
+* styled-components (`styled-components/native`);
 * Expo Notifications;
 * AsyncStorage ou SecureStore conforme o tipo de dado;
 * EAS Build;
@@ -1118,37 +1117,45 @@ Componentes visuais não devem:
 
 * Realizar chamadas HTTP;
 * Conhecer detalhes de autenticação;
-* Conter regras extensas;
+* Conter lógica, que fica no hook do próprio componente;
 * Alterar diretamente o cache;
 * Misturar múltiplos domínios.
 
-Estrutura possível:
+Cada tela ou componente fica em uma pasta própria, com um arquivo por responsabilidade:
 
 ```text
-EventCard/
-  EventCard.tsx
-  EventCard.types.ts
-  EventCard.test.tsx
-  index.ts
+CountryFlag/
+  CountryFlag.tsx        somente renderização
+  types.ts               tipos, props e constantes
+  style.ts               estilos com styled-components
+  useCountryFlag.ts      lógica do componente
+  CountryFlag.test.tsx   testes, quando existirem
 ```
 
-Como Tailwind e NativeWind serão utilizados, não é obrigatório criar um arquivo de estilo separado para cada componente.
+Regras:
 
-Classes extensas e repetidas devem ser extraídas para variantes ou componentes reutilizáveis.
+* O `.tsx` contém apenas componentes e renderização;
+* Tipos, interfaces, props e constantes ficam em `types.ts`;
+* Estilos ficam sempre em `style.ts`, com styled-components (`styled-components/native` no mobile);
+* Não usar estilo inline, `StyleSheet`, `className` nem elementos crus (`div`, `View`, `Text`) estilizados diretamente no `.tsx`;
+* A lógica fica no hook `use<Nome>.ts` da própria tela ou componente;
+* Escolhas visuais que dependem de estado são decididas no hook e mapeadas no `style.ts` (ex.: `$state: 'active' | 'inactive'`), sem condicionais dentro dos estilos;
+* Arquivos sem conteúdo não são criados: um componente sem lógica não tem hook;
+* Componentes usados só por uma tela ficam em `components/`, dentro da pasta dela.
+
+Estilos, componentes e lógicas que se repetem ou são semelhantes devem ser centralizados e reutilizados, sem complexidade desnecessária.
 
 ---
 
-# 29. shadcn/ui e componentes compartilhados
+# 29. Componentes compartilhados
 
-Os componentes do shadcn/ui devem ser tratados como código do próprio projeto.
+Componentes compartilhados seguem a mesma estrutura da seção 28 e devem:
 
-Eles podem ser adaptados, desde que:
-
-* A acessibilidade seja preservada;
-* A API do componente permaneça clara;
-* As alterações sejam consistentes;
-* Não exista duplicação desnecessária;
-* O design system seja respeitado.
+* Preservar a acessibilidade;
+* Ter uma API clara;
+* Evoluir de forma consistente;
+* Evitar duplicação desnecessária;
+* Respeitar o tema e o design system.
 
 Componentes compartilhados possíveis:
 
@@ -1174,7 +1181,7 @@ Componentes compartilhados possíveis:
 
 # 30. Hooks
 
-Hooks devem controlar lógica reutilizável de interface.
+Toda lógica de interface fica em hooks. Cada tela ou componente com lógica tem o próprio hook (`use<Nome>.ts`) na sua pasta; hooks usados por mais de uma tela ficam em uma pasta compartilhada.
 
 Podem conter:
 
@@ -1236,6 +1243,7 @@ Estrutura sugerida:
 app/
   _layout.tsx
   (tabs)/
+    _layout.tsx
     index.tsx
     calendar.tsx
     discover.tsx
@@ -1251,17 +1259,24 @@ app/
     [id].tsx
 ```
 
-O código de domínio deve permanecer fora da pasta `app` quando não representar uma rota.
+O código deve permanecer fora da pasta `app` quando não representar uma rota. Os arquivos de `app/` apenas reexportam componentes de `src/`, por exemplo:
+
+```typescript
+export { Agenda as default } from '@/pages/Agenda/Agenda';
+```
 
 ```text
 src/
-  features/
-  components/
-  services/
-  hooks/
-  types/
-  lib/
+  RootLayout/   componente raiz (fontes, splash screen e barra de status)
+  AppRoutes/    navegação principal
+  TabRoutes/    barra de abas
+  pages/        telas, uma pasta por tela, com components/ locais
+  shared/       componentes, estilos, hooks e tema reutilizados
+  services/     comunicação HTTP (seção 31), quando existir
+  utils/        funções utilitárias
 ```
+
+Não criar `src/app` nem `src/App`: o Expo Router passaria a usar essa pasta como raiz das rotas, e no Windows e no macOS maiúsculas e minúsculas são o mesmo nome.
 
 ---
 
@@ -1858,7 +1873,7 @@ Entretanto, alguns padrões foram adaptados à nova stack:
 
 * Minimal APIs substituem Controllers tradicionais;
 * TanStack Query controla o estado de servidor;
-* Tailwind e NativeWind substituem arquivos obrigatórios de Styled Components;
+* Styled Components continuam obrigatórios, sempre em arquivos `style.ts` separados, com a lógica em hooks e os tipos em `types.ts`;
 * Repository deixa de ser obrigatório para cada entidade;
 * Monólito modular substitui a divisão genérica por camadas isoladas;
 * Workers, integrações, normalização, deduplicação, cache e observabilidade passam a fazer parte central da arquitetura;
