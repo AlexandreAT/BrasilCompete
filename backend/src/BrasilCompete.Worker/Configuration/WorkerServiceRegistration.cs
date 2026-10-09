@@ -44,6 +44,7 @@ public static class WorkerServiceRegistration
         services.AddSingleton<SourceRunner>();
         services.AddSingleton<CollectCommand>();
         services.AddSingleton<IdentityCommand>();
+        services.AddSingleton<ValidateCommand>();
         services.AddSingleton<CommandDispatcher>();
 
         services.AddWikidataIdentity(configuration, workerOptions);

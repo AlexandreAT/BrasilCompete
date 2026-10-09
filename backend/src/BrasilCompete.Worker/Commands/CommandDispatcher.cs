@@ -16,6 +16,8 @@ public sealed class CommandDispatcher(
           collect --from aaaa-mm-dd --to aaaa-mm-dd [--sources a,b] [--no-cache]
           collect --days N [--sources a,b] [--no-cache]
           identity            gera o catálogo de identidade a partir do Wikidata
+          validate [--reference validation/reference-past.csv] [--events output/latest/events.json]
+                              compara um gabarito com os eventos de uma execução
 
         Exemplo:
           dotnet run --project backend/src/BrasilCompete.Worker -- collect --from 2026-09-01 --to 2026-09-30
@@ -38,6 +40,7 @@ public sealed class CommandDispatcher(
                     CollectCommandOptions.Parse(args[1..], BrasiliaTime.ToDate(timeProvider.GetUtcNow())),
                     cancellationToken),
                 "identity" => await services.GetRequiredService<IdentityCommand>().RunAsync(cancellationToken),
+                "validate" => await services.GetRequiredService<ValidateCommand>().RunAsync(args[1..], cancellationToken),
                 _ => throw new CommandLineException($"Comando desconhecido: {args[0]}"),
             };
         }
