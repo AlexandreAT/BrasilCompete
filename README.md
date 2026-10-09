@@ -156,7 +156,9 @@ npm run typecheck
 - `src/utils/`: funções utilitárias;
 - `app/`: arquivos de ligação exigidos pelo Expo Router, que só reexportam
   componentes de `src/`;
-- `assets/`: imagens e demais arquivos estáticos.
+- `assets/`: imagens e demais arquivos estáticos;
+- `backend/`: worker em .NET do teste de viabilidade dos dados (veja
+  [backend/README.md](./backend/README.md)).
 
 Não crie uma pasta `src/app` (nem `src/App`): o Expo Router passaria a procurar
 as rotas nela, e no Windows e no macOS maiúsculas e minúsculas são o mesmo nome.

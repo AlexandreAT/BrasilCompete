@@ -31,7 +31,19 @@ yarn-error.*
 *.pem
 
 # local env files
+.env
 .env*.local
+
+# .NET (backend)
+backend/**/bin/
+backend/**/obj/
+backend/**/TestResults/
+*.user
+
+# backend: saídas, cache e estado local do worker
+backend/output/
+backend/.cache/
+backend/.state/
 
 # typescript
 *.tsbuildinfo

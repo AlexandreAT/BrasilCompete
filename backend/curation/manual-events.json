@@ -1,0 +1,88 @@
+{
+  "events": [
+    {
+      "key": "teste-brasil-franca-amistoso",
+      "isTestData": true,
+      "sport": "football",
+      "competition": "Amistoso internacional",
+      "format": "Matchup",
+      "scope": "International",
+      "schedule": {
+        "precision": "DateAndTime",
+        "date": "2026-10-14",
+        "localTime": "21:00",
+        "timeZone": "Europe/Paris"
+      },
+      "venue": "Estádio de exemplo",
+      "participants": [
+        { "name": "Brasil", "kind": "NationalTeam", "country": "BRA" },
+        { "name": "França", "kind": "NationalTeam", "country": "FRA" }
+      ],
+      "sourceUrl": "https://github.com/AlexandreAT/BrasilCompete",
+      "note": "Dado de teste, com data fictícia, para exercitar um confronto com horário marcado."
+    },
+    {
+      "key": "teste-santos-barcelona-amistoso",
+      "isTestData": true,
+      "sport": "football",
+      "competition": "Amistoso internacional de clubes",
+      "format": "Matchup",
+      "scope": "International",
+      "schedule": {
+        "precision": "ToBeConfirmed"
+      },
+      "participants": [
+        { "name": "Santos", "kind": "Club", "country": "BRA" },
+        { "name": "Barcelona", "kind": "Club", "country": "ESP" }
+      ],
+      "sourceUrl": "https://github.com/AlexandreAT/BrasilCompete",
+      "note": "Dado de teste: amistoso anunciado sem data."
+    },
+    {
+      "key": "teste-calderano-wtt-champions",
+      "isTestData": true,
+      "sport": "table-tennis",
+      "competition": "WTT Champions (exemplo)",
+      "format": "Participation",
+      "scope": "International",
+      "schedule": {
+        "precision": "CompetitionPeriod",
+        "periodStart": "2026-10-20",
+        "periodEnd": "2026-10-25"
+      },
+      "participants": [
+        { "name": "Hugo Calderano", "kind": "Athlete", "country": "BRA" }
+      ],
+      "sourceUrl": "https://github.com/AlexandreAT/BrasilCompete",
+      "note": "Dado de teste: participação antes de a chave sair."
+    },
+    {
+      "key": "teste-warriors-lakers",
+      "isTestData": true,
+      "sport": "basketball",
+      "competition": "NBA",
+      "stage": "Temporada regular",
+      "format": "Matchup",
+      "scope": "ForeignDomestic",
+      "schedule": {
+        "precision": "DateAndTime",
+        "date": "2026-10-22",
+        "localTime": "19:00",
+        "timeZone": "America/Los_Angeles"
+      },
+      "participants": [
+        {
+          "name": "Golden State Warriors",
+          "kind": "Club",
+          "country": "USA",
+          "members": [
+            { "name": "Gui Santos", "kind": "Athlete", "country": "BRA", "team": "Golden State Warriors" }
+          ]
+        },
+        { "name": "Los Angeles Lakers", "kind": "Club", "country": "USA" }
+      ],
+      "sourceUrl": "https://github.com/AlexandreAT/BrasilCompete",
+      "note": "Dado de teste: brasileiro em equipe estrangeira (visão Indivíduos)."
+    }
+  ]
+}

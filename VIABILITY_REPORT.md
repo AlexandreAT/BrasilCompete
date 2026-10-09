@@ -17,7 +17,7 @@
 | Fase | Situação | Data | Observações |
 | --- | --- | --- | --- |
 | 0 — Entender o projeto | Concluída | 09/10/2026 | Convenções na seção 3 |
-| 1 — Base do worker | Pendente | | |
+| 1 — Base do worker | Concluída | 09/10/2026 | 65 testes passando; `events.json` gerado a partir da curadoria |
 | 2 — Identidade e entidades de referência | Pendente | | |
 | 3 — Fontes sem chave | Pendente | | |
 | 4 — Consolidação | Pendente | | |
@@ -78,6 +78,16 @@ Seguem o `PROJECT_GUIDE.md` (seções 15 a 24 e 40 a 51) e a regra de separaçã
 * Segredos só em User Secrets ou variáveis de ambiente;
 * Requisições identificadas com `BrasilCompete-Viability/0.1 (+https://github.com/AlexandreAT/BrasilCompete)`.
 
+## 3.4. Decisões de modelagem do worker (fase 1)
+
+* **Modelo:** `SportEvent` (e não `Event`, para não confundir com a palavra-chave `event` do C#), com `Participant`, `Schedule` e os enums do plano (`EventFormat`, `SchedulePrecision`, `EventView`). Uma equipe ou dupla lista os atletas em `Members`: é assim que "Gui Santos (Warriors)" aparece num jogo Warriors x Lakers.
+* **Datas:** em eventos com horário, `startUtc` guarda o instante e `date` guarda o dia no horário de Brasília. Eventos "A confirmar" nunca ficam fora da janela.
+* **Alcance da competição:** cada adapter decide se a competição é internacional, liga nacional estrangeira (só entra pela visão de Indivíduos) ou liga nacional brasileira (nunca entra), a partir de um catálogo de competições em configuração (plano, seção 9.6).
+* **Visão:** em modalidades individuais (F1, xadrez, MMA, tênis, tênis de mesa, vôlei de praia), atleta que representa o Brasil vai para o feed principal, e quem só nasceu no Brasil vai para Indivíduos. Em modalidades de equipe, equipe brasileira em competição internacional vai para o feed principal, e brasileiro em equipe estrangeira vai para Indivíduos.
+* **Identificador:** `modalidade:competição:participantes[:fase]:data`, determinístico. Quando o evento ganha data ou muda de dia, o histórico o reconhece pela chave sem a data e registra a mudança, em vez de contar um evento novo.
+* **Deduplicação:** mesma modalidade, formato e participantes (ID do Wikidata, ou nome normalizado), com até um dia de diferença. Participações (como sessões da F1) só se juntam com a mesma fase, e dois eventos com IDs diferentes na mesma fonte nunca se juntam. A curadoria manual vence; nas demais fontes, vale o horário mais preciso, com desempate pela prioridade configurada. Horários e datas divergentes viram conflitos registrados.
+* **Acesso às fontes:** cada fonte tem um cliente HTTP com, de fora para dentro, cache em disco, uma requisição por vez com intervalo mínimo, resiliência (3 tentativas, backoff exponencial, respeito ao `Retry-After`, espera configurável em 429 sem cabeçalho) e contagem de requisições e 429.
+
 ---
 
 # 4. Desvios do plano e motivos
@@ -87,6 +97,9 @@ Seguem o `PROJECT_GUIDE.md` (seções 15 a 24 e 40 a 51) e a regra de separaçã
 | 1 | O app foi alterado antes do teste (refatoração para styled-components e nova estrutura de pastas) | Pedido explícito do usuário, em commit próprio (`dc1e5a4`), fora do escopo do teste |
 | 2 | O `PROJECT_GUIDE.md` foi atualizado (styling, estrutura de componentes, .NET 10 e asserções do xUnit) em vez de só receber propostas | Orientação do usuário: não deixar documentação falsa |
 | 3 | O .NET 10 foi instalado por usuário (sem administrador), fora do PATH padrão | PC corporativo sem administrador; o `dotnet` do sistema só tem o SDK 8 |
+| 4 | Script `backend/scripts/worker.ps1`, além do `collect.ps1` previsto | Encontra o .NET 10 mesmo quando o `dotnet` do PATH é outra versão, e serve de base para o `collect.ps1` |
+| 5 | Logs com o console do `Microsoft.Extensions.Logging`, sem Serilog | O teste não precisa de destinos de log; o código usa `ILogger`, então trocar pelo Serilog depois é só configuração |
+| 6 | Saída extra `discarded.json` | Guarda os descartados com o motivo (plano, seção 9.6) para medir falsos positivos e revisar por amostragem |
 
 ---
 
@@ -134,7 +147,8 @@ Preencher nas fases 3, 5 e 8.
 
 # 12. Execução
 
-Preencher a partir da fase 1.
+* **Como rodar:** `.\backend\scripts\worker.ps1 collect --from aaaa-mm-dd --to aaaa-mm-dd` (detalhes em `backend/README.md`).
+* **Fase 1:** só com a curadoria (4 eventos de teste), a execução leva 0,3 s e gera `events.json`, `discarded.json`, `run-summary.json` e `agenda.md`.
 
 ---
 
