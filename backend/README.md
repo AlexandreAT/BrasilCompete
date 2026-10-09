@@ -30,12 +30,17 @@ Na raiz do repositório, no PowerShell:
 # Coleta os próximos 14 dias, a partir de hoje
 .\backend\scripts\worker.ps1 collect --days 14
 
-# Só algumas fontes, ignorando o cache
-.\backend\scripts\worker.ps1 collect --days 14 --sources manual,jolpica --no-cache
+# Só algumas fontes, ignorando o cache (no PowerShell, a lista vai entre aspas)
+.\backend\scripts\worker.ps1 collect --days 14 --sources "manual,jolpica" --no-cache
+
+# Gera o catálogo de identidade a partir do Wikidata (rode antes da primeira coleta)
+.\backend\scripts\worker.ps1 identity
 
 # Testes
 .\backend\scripts\worker.ps1 test
 ```
+
+Sem o catálogo de identidade, a coleta funciona, mas só com a nacionalidade informada pelas próprias fontes.
 
 Com o .NET 10 no PATH, o equivalente é
 `dotnet run --project backend/src/BrasilCompete.Worker -- collect --from 2026-09-01 --to 2026-09-30`.
@@ -56,8 +61,29 @@ Cada execução grava em `backend/output/runs/<data-hora>/` e copia para `backen
 
 Também ficam fora do Git:
 
-- `backend/.state/history.json`: histórico entre execuções (primeira aparição, mudanças e eventos que sumiram);
+- `backend/.state/history.json`: histórico entre execuções (primeira aparição, mudanças e eventos que sumiram).
+  Um evento só é marcado como ausente se todas as suas fontes rodaram com sucesso;
+- `backend/.state/identity/wikidata-catalog.json`: catálogo de identidade gerado pelo comando `identity`, com
+  um resumo em `backend/output/identity/summary.md`;
 - `backend/.cache/`: cache das respostas das fontes, para não repetir requisições durante o desenvolvimento.
+
+As três pastas crescem a cada execução (uma pasta por execução em `output/runs/`) e podem ser apagadas a
+qualquer momento; o worker as recria.
+
+## Fontes
+
+| Fonte (nome em `--sources`) | Modalidades | O que lê | Catálogo em `appsettings.json` |
+| --- | --- | --- | --- |
+| `manual` | Todas | `curation/manual-events.json` | — |
+| `jolpica` | Fórmula 1 | Calendário e classificação de pilotos da API da Jolpica | `Sources:Jolpica:Sessions` |
+| `lichess` | Xadrez | Transmissões oficiais da Lichess (atuais, próximas e passadas) | — |
+| `wikipedia-football` | Futebol | Predefinições de partida das páginas configuradas | `Sources:Wikipedia:FootballPages` |
+| `wikipedia-ufc` | MMA | Lista de eventos do UFC, cards e elenco atual (bandeiras) | — |
+| `wikipedia-tennis` | Tênis e tênis de mesa | Chaves de simples das páginas configuradas, com o período do torneio | `Sources:Wikipedia:TennisDraws` |
+| `liquipedia` | VALORANT, CS2 e LoL | Torneios configurados, partidas e país dos times | `Sources:Liquipedia:Tournaments` |
+
+O catálogo de identidade usa o Wikidata (`Sources:Wikidata`). Termos e limites de cada fonte estão na seção 5 de
+[VIABILITY_REPORT.md](../VIABILITY_REPORT.md).
 
 ## Estrutura
 
@@ -68,14 +94,14 @@ backend/
 ├── validation/                   entidades de referência e gabaritos
 ├── scripts/                      worker.ps1 e coleta diária
 ├── src/BrasilCompete.Worker/
-│   ├── Commands/                 linha de comando (collect)
+│   ├── Commands/                 linha de comando (collect e identity)
 │   ├── Configuration/            opções, caminhos e injeção de dependência
 │   ├── Domain/                   SportEvent, Participant, Schedule e enums
 │   ├── History/                  histórico entre execuções
 │   ├── Http/                     cache, espaçamento entre requisições, resiliência e métricas
-│   ├── Identity/                 regras de "quem é brasileiro"
+│   ├── Identity/                 catálogo do Wikidata e regras de "quem é brasileiro"
 │   ├── Integrations/<Fonte>/     um adapter por fonte (Client, contratos, Mapper, Options)
-│   ├── Normalization/            textos e fusos
+│   ├── Normalization/            textos, fusos e códigos e nomes de países
 │   ├── Output/                   events.json, run-summary.json e agenda.md
 │   ├── Pipeline/                 filtro, visão, identificadores e deduplicação
 │   └── Serialization/            formato JSON
